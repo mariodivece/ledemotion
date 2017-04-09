@@ -1,0 +1,121 @@
+﻿<script id="status-view" type="text/x-handlebars-template">
+    <div class="row">
+        <div class="col-sm-12">
+            <h3>Newtork LED Controller Status</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <table class="table table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th class="cell cell-center" style="width: 25%">Item</th>
+                        <th class="cell cell-center" style="width: 35%">Value</th>
+                        <th class="cell cell-center" style="width: 40%">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Connection Type</td>
+                        <td>Wireless</td>
+                        <td>Could be wired or wireless</td>
+                    </tr>
+                    <tr>
+                        <td>IP Address</td>
+                        <td>X.Y.X</td>
+                        <td>The network IPv4 address of this controller</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</script>
+
+<script id="simplemode-view" type="text/x-handlebars-template">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="alert alert-info" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <strong>Single Color</strong> Pick and drag to set a solid color. You can save your selection as a preset.
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <div class="col-sm-12">
+                        <div class="input-group">
+                            <input id="solidColorModeValue" class="form-control color-input" type="text" disabled="disabled" />
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button">
+                                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                                </button>
+                            </span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <canvas id="solidColorModeCanvas" style="width: 100%; height: 300px;"></canvas>
+        </div>
+    </div>
+
+</script>
+
+<script id="transitionmode-view" type="text/x-handlebars-template">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="alert alert-info" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <strong>Transition</strong> Pick several colors!
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <div class="col-sm-12">
+                        <input id="transitionColorModeValue" class="form-control color-input" type="text" disabled="disabled" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <canvas id="transitionColorModeCanvas" style="width: 100%; height: 150px;"></canvas>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-sm-12">
+            <div style="position:relative; width: 100%; min-height: 60px;">
+                <div id="transitionValues" style="position: relative; z-index:100; width: 100%; min-height: 60px; text-align: center;"></div>
+                <div id="transitionValuesHelp" style="width:100%; position: absolute; left: 0; top: 0; height: 60px; line-height: 60px; text-align: center;" class="text-muted">
+                    <span style="display:inline-block; vertical-align:middle; line-height:normal;">Pick multiple colors. Remove a color by tapping on the colored squares appearing here.</span>
+                </div>
+            </div>
+
+            <hr />
+            <div id="transitionDelaySlider"></div>
+            <button style="width:100%;" class="btn btn-default" type="button">Apply</button>
+        </div>
+    </div>
+</script>
+
+<script id="customimagemode-view" type="text/x-handlebars-template">
+    <div class="row">
+        <div class="col-sm-12">
+            <h3>Custom Image</h3>
+        </div>
+    </div>
+</script>
+

@@ -1,0 +1,87 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>LED Control - Home Automation</title>
+        
+        <!-- Load styles -->
+        <link rel="stylesheet" href="/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="/css/bootstrap-theme.min.css" />
+        <link rel="stylesheet" href="/css/nouislider.min.css" />
+        <link rel="stylesheet" href="/css/styles.css" />
+    </head>
+    <body>
+        <!-- Fixed navbar -->
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#bs-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" data-section="status"><i class="glyphicon glyphicon-certificate"></i> LED Controller</a>
+                </div>
+                <div class="collapse navbar-collapse" id="bs-navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a data-section="status"><i class="glyphicon glyphicon-info-sign"></i> Status</a></li>
+                        <li><a data-section="simpleMode"><i class="glyphicon glyphicon-tint"></i> Single Color</a></li>
+                        <li><a data-section="transitionMode"><i class="glyphicon glyphicon-equalizer"></i> Transition</a></li>
+                        <li><a data-section="customImageMode"><i class="glyphicon glyphicon-picture"></i> Custom Image</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container section" id="statusContainer">
+            Status <br />
+            Loading . . .
+        </div>
+
+        <div class="container section" id="simpleModeContainer">
+            Simple Mode <br />
+            Loading . . .
+        </div>
+
+        <div class="container section" id="transitionModeContainer">
+            Transition Mode <br />
+            Loading . . .
+        </div>
+
+        <div class="container section" id="customImageModeContainer">
+            Custom Image Mode <br />
+            Loading . . .
+        </div>
+
+        <footer class="footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        Copyright &copy; 2016 <a target="_blank" href="http://www.unosquare.com">Unosquare</a> SA de CV - All rights reserved
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Templates holder -->
+        <div id="templates"></div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="appModal" role="dialog">
+            <div class="modal-dialog">
+            </div>
+        </div>
+
+        <!-- Lod javascript files -->
+        <script src="/js/jquery-3.2.0.min.js"></script>
+        <script src="/js/bootstrap.min.js"></script>
+        <script src="/js/handlebars.min.js"></script>
+        <script src="/js/nouislider.min.js"></script>
+        <script src="/js/colorpalette.js"></script>
+        <script src="/js/app.js"></script>
+    </body>
+</html>
