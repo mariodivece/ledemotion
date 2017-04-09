@@ -166,6 +166,101 @@
         }
 
         /// <summary>
+        /// Sets all the LED strip pixels to a single color, at full brightness.
+        /// </summary>
+        /// <param name="r">The r.</param>
+        /// <param name="g">The g.</param>
+        /// <param name="b">The b.</param>
+        public void SetPixels(byte r, byte g, byte b)
+        {
+            var buffer = new byte[LedCount * 3];
+            for (var i = 0; i < buffer.Length; i += 3)
+            {
+                buffer[i] = r;
+                buffer[i + 1] = g;
+                buffer[i + 2] = b;
+            }
+
+            SetPixels(buffer);
+        }
+
+
+        /// <summary>
+        /// Sets a number of pixels give a byte array. This method copies datadirectly to the frame buffer so it
+        /// is very fast. Always call the render method to display the results
+        /// </summary>
+        /// <param name="pixels">The pixels. The length of the array must be a multiple of 3</param>
+        /// <param name="startPixelIndex">Start index of the RGB set. This is not the start index of the byte array but rather the index of one of the RGB sets contained by the pixel array</param>
+        /// <param name="brightness">The brightness. From 0 to 1. Try to always use 1 and set the brightness by changing RGB values instead.</param>
+        /// <param name="targetOffset">The target LED offset.</param>
+        /// <param name="targetLength">The amount of pixels to copy over to the LED strip.</param>
+        /// <exception cref="ArgumentException">The length of the buffer must be a multiple of 3 - pixels</exception>
+        /// <exception cref="ArgumentNullException">pixels</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// sourceStartIndex
+        /// or
+        /// targetOffset
+        /// or
+        /// targetLength
+        /// </exception>
+        public void SetPixels(byte[] pixels, int startPixelIndex = 0, float brightness = 1f, int targetOffset = 0, int targetLength = 0)
+        {
+            var brightnessByte = default(byte);
+
+            { // Parameter validation
+
+                if (pixels.Length % 3 != 0)
+                    throw new ArgumentException("The length of the buffer must be a multiple of 3", nameof(pixels));
+
+                if (pixels == null)
+                    throw new ArgumentNullException(nameof(pixels));
+
+                if (startPixelIndex < 0 || startPixelIndex > (pixels.Length - targetLength) - 1)
+                    throw new ArgumentOutOfRangeException(nameof(startPixelIndex));
+
+                if (targetOffset < 0) targetOffset = 0;
+                if (targetOffset > LedCount - 1)
+                    throw new ArgumentOutOfRangeException(nameof(targetOffset));
+
+                if (targetLength <= 0)
+                    targetLength = LedCount;
+
+                if (targetOffset + targetLength > LedCount)
+                    throw new ArgumentOutOfRangeException(nameof(targetLength));
+
+                // Brightness Setting
+                if (brightness < 0f) brightness = 0f;
+                if (brightness > 1f) brightness = 1f;
+                brightnessByte = (byte)(brightness * 31);
+                brightnessByte = (byte)(brightnessByte | BrightnessSetMask);
+            }
+
+            // Offset and addresing settings
+            var offsetB = ReverseRgb ? 1 : 3; var offsetG = 2; var offsetR = ReverseRgb ? 3 : 1; var offsetT = 0;
+            var setCount = 0;
+            var bmpOffsetBase = startPixelIndex * 3;
+            var bmpOffsetLimit = bmpOffsetBase + (targetLength * 3);
+            var frameBufferOffset = StartFrame.Length + (targetOffset * StartFrame.Length);
+
+            // Pixel copying
+            lock (SyncLock)
+            {
+                for (var bmpOffset = bmpOffsetBase; bmpOffset < bmpOffsetLimit; bmpOffset += BitmapBuffer.BytesPerPixel)
+                {
+                    FrameBuffer[frameBufferOffset + offsetT] = brightnessByte;
+                    FrameBuffer[frameBufferOffset + offsetR] = pixels[bmpOffset + BitmapBuffer.ROffset]; // R
+                    FrameBuffer[frameBufferOffset + offsetG] = pixels[bmpOffset + BitmapBuffer.GOffset]; // G
+                    FrameBuffer[frameBufferOffset + offsetB] = pixels[bmpOffset + BitmapBuffer.BOffset]; // B
+                    frameBufferOffset += StartFrame.Length;
+                    setCount += 1;
+
+                    if (setCount >= targetLength)
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
         /// Sets a number of pixels from loaded pixel data directly into the frame buffer
         /// This is the fastest method to set a number of pixels.
         /// Call the Render Method to apply!

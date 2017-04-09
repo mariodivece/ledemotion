@@ -57,10 +57,13 @@
     <Compile Include="Api.cs" />
     <Compile Include="DotStarLedStrip.cs" />
     <Compile Include="DotStartLedStripPixel.cs" />
+    <Compile Include="IAnimation.cs" />
     <Compile Include="IWorker.cs" />
     <Compile Include="LedStripWorker.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SolidColorAnimation.cs" />
+    <Compile Include="TransitionColorAnimation.cs" />
     <Compile Include="WebServerWorker.cs" />
   </ItemGroup>
   <ItemGroup>
