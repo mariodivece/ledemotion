@@ -90,7 +90,7 @@
                 if (frameStopwatch.ElapsedMilliseconds > MillisecondsPerFrame)
                     $"Frames are lagging. Increase the frequency or simplify the rendering logic.".Warn(typeof(LedStripWorker));
 
-                while (frameStopwatch.ElapsedMilliseconds < MillisecondsPerFrame)
+                while (frameStopwatch.ElapsedMilliseconds < MillisecondsPerFrame && !IsPendingStop)
                     Thread.Sleep(1);
             }
 
@@ -117,12 +117,12 @@
             }
         }
 
-        public void SetTransition(List<byte[]> rgbValues, TimeSpan transitionTime)
+        public void SetTransition(List<byte[]> rgbValues, TimeSpan totalTransitionTime)
         {
             lock (SyncLock)
             {
                 var animation = Animations[AnimationType.Transition] as TransitionColorAnimation;
-                animation.SetTransitions(rgbValues, transitionTime);
+                animation.SetTransitions(rgbValues, totalTransitionTime);
                 CurrentAnimationType = AnimationType.Transition;
             }
         }
