@@ -3,6 +3,7 @@
     using System;
     using System.Diagnostics;
     using System.Linq;
+    using Unosquare.LedEmotion.Controller.Workers;
 
     static public class Program
     {

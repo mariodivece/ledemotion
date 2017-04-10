@@ -54,17 +54,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Api.cs" />
-    <Compile Include="DotStarLedStrip.cs" />
-    <Compile Include="DotStartLedStripPixel.cs" />
-    <Compile Include="IAnimation.cs" />
-    <Compile Include="IWorker.cs" />
-    <Compile Include="LedStripWorker.cs" />
+    <Compile Include="Animation\AnimationType.cs" />
+    <Compile Include="Core\Api.cs" />
+    <Compile Include="Core\DotStarLedStrip.cs" />
+    <Compile Include="Core\DotStartLedStripPixel.cs" />
+    <Compile Include="Animation\IAnimation.cs" />
+    <Compile Include="Animation\ImageAnimation.cs" />
+    <Compile Include="Workers\IWorker.cs" />
+    <Compile Include="Workers\LedStripWorker.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SolidColorAnimation.cs" />
-    <Compile Include="TransitionColorAnimation.cs" />
-    <Compile Include="WebServerWorker.cs" />
+    <Compile Include="Animation\SolidColorAnimation.cs" />
+    <Compile Include="Animation\TransitionColorAnimation.cs" />
+    <Compile Include="Workers\WebServerWorker.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

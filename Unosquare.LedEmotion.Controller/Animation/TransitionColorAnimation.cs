@@ -1,4 +1,4 @@
-﻿namespace Unosquare.LedEmotion.Controller
+﻿namespace Unosquare.LedEmotion.Controller.Animation
 {
     using System;
     using System.Collections.Generic;

@@ -1,7 +1,8 @@
-﻿namespace Unosquare.LedEmotion.Controller
+﻿namespace Unosquare.LedEmotion.Controller.Animation
 {
     using System;
     using System.Collections.Generic;
+    using Unosquare.LedEmotion.Controller.Workers;
     using Unosquare.Swan;
 
     public class SolidColorAnimation : IAnimation
