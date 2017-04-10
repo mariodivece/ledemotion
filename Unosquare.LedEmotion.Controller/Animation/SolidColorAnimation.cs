@@ -79,7 +79,7 @@
                 LedStripWorker.Instance.LedStrip.SetPixels(c[0], c[1], c[2]);
                 if (ColorQueue.Count >= 1)
                 {
-                    $"Solid Color Render: {c[0]}, {c[1]}, {c[2]}".Trace();
+                    //$"Solid Color Render: {c[0]}, {c[1]}, {c[2]}".Trace();
                 }
             }
         }

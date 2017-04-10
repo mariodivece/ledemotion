@@ -1,0 +1,1 @@
+C:\utils\sshdeploy\SshDeploy.exe monitor -s "C:\projects\ledemotion\Unosquare.LedEmotion.Controller\bin\Debug" -t "/home/pi/piemotion" -h 192.168.2.130 -u pi -w raspberry
