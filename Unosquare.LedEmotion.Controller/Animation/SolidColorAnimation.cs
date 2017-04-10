@@ -12,7 +12,7 @@
 
         public SolidColorAnimation()
         {
-
+            // placeholder
         }
 
         public bool IsTransitionComplete { get { return ColorQueue.Count <= 1; } }
@@ -25,6 +25,11 @@
                     ColorQueue.Enqueue(new byte[3]);
 
                 var currentColor = ColorQueue.Peek();
+
+                // if the colors are the same just stay where we are.
+                if (currentColor.Contains(rgb))
+                    return;
+
                 ColorQueue.Clear();
 
                 var framesInTransition = Convert.ToInt32(
@@ -72,6 +77,10 @@
                 // If we ar in the last frame, just peek it, otherwise, dequeue it.
                 var c = ColorQueue.Count == 1 ? ColorQueue.Peek() : ColorQueue.Dequeue();
                 LedStripWorker.Instance.LedStrip.SetPixels(c[0], c[1], c[2]);
+                if (ColorQueue.Count >= 1)
+                {
+                    $"Solid Color Render: {c[0]}, {c[1]}, {c[2]}".Trace();
+                }
             }
         }
     }

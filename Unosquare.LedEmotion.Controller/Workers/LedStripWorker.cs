@@ -187,7 +187,11 @@
                 }
 
                 if (frameStopwatch.ElapsedMilliseconds > MillisecondsPerFrame)
-                    $"Frames are lagging. Increase the frequency or simplify the rendering logic.".Warn(typeof(LedStripWorker));
+                {
+                    $"Frames are lagging. Increase the frequency or simplify the rendering logic.".Warn(); // typeof(LedStripWorker));
+                    continue;
+                }
+                    
 
                 while (frameStopwatch.ElapsedMilliseconds < MillisecondsPerFrame && !IsPendingStop)
                     Thread.Sleep(1);

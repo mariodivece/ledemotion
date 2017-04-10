@@ -20,6 +20,15 @@
         private CancellationTokenSource TokenSource = null;
         private Task WebServerTask = null;
 
+        /// <summary>
+        /// Prevents a default instance of the <see cref="WebServerWorker"/> class from being created.
+        /// </summary>
+        private WebServerWorker()
+            : base()
+        {
+            // placeholder
+        }
+
         public string StaticFilesRootPath
         {
             get

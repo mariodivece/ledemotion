@@ -4,6 +4,7 @@
     using System.Diagnostics;
     using System.Linq;
     using Unosquare.LedEmotion.Controller.Workers;
+    using Unosquare.Swan;
 
     static public class Program
     {
@@ -12,7 +13,7 @@
         {
 
             WebServerWorker.Instance.Start();
-
+            LedStripWorker.Instance.Start();
             
             if (Debugger.IsAttached)
             {
@@ -20,8 +21,16 @@
                 browser.Start();
             }
 
-            Console.ReadKey(true);
+
+            "Press any key to stop the workers.".Info();
+
+            Terminal.ReadKey(true, true);
             WebServerWorker.Instance.Stop();
+            $"Stopped Web Server".Warn();
+            LedStripWorker.Instance.Stop();
+            $"Stopped LED Strip Animation".Warn();
+            $"Press any key to continue . . .".ReadKey(true);
+            Terminal.Flush();
         }
     }
 }

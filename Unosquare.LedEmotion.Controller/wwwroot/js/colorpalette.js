@@ -108,9 +108,18 @@
             try {
 
                 var imageData = control.graphics.getImageData(control.position.X, control.position.Y, 1, 1).data;
-                control.color.R = control.clampInt(imageData[0], 0, 255);
-                control.color.G = control.clampInt(imageData[1], 0, 255);
-                control.color.B = control.clampInt(imageData[2], 0, 255);
+                var newColor = {
+                    R: control.clampInt(imageData[0], 0, 255),
+                    G: control.clampInt(imageData[1], 0, 255),
+                    B: control.clampInt(imageData[2], 0, 255)
+                };
+
+                if (control.color.R === newColor.R && control.color.G === newColor.G && control.color.B === newColor.B)
+                    return;
+
+                control.color.R = newColor.R;
+                control.color.G = newColor.G;
+                control.color.B = newColor.B;
 
                 var eventData = control.getEventData();
                 control.$element.trigger("change", [eventData]);

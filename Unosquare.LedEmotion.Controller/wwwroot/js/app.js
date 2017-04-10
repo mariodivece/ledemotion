@@ -27,30 +27,40 @@ var app = {};
         CustomImageModeView: ''
     };
 
-    app.PendingRequests = [];
+    app.AjaxManager = {
+        requests: [],
+        addReq: function (opt) {
+            this.requests.push(opt);
 
-    app.IsRequestPending = function (requestName) {
-        if (requestName === null) {
-            return app.PendingRequests.length > 0;
-        }
+            if (this.requests.length == 1) {
+                this.run();
+            }
+        },
+        removeReq: function (opt) {
+            if ($.inArray(opt, requests) > -1)
+                this.requests.splice($.inArray(opt, requests), 1);
+        },
+        run: function () {
+            // original complete callback
+            var oricomplete = this.requests[0].complete;
 
-        return $.inArray(requestName, app.PendingRequests) >= 0;
-    };
+            // override complete callback
+            var ajxmgr = this;
+            ajxmgr.requests[0].complete = function () {
+                if (typeof oricomplete === 'function')
+                    oricomplete();
 
-    app.RegisterRequest = function (requestName) {
-        if (app.IsRequestPending(requestName))
-            return false;
+                ajxmgr.requests.shift();
+                if (ajxmgr.requests.length > 0) {
+                    ajxmgr.run();
+                }
+            };
 
-        app.PendingRequests.push(requestName);
-        return true;
-    };
-
-    app.UnregisterRequest = function (requestName) {
-        if (app.IsRequestPending(requestName) === false)
-            return false;
-
-        app.PendingRequests.splice($.inArray(requestName, app.PendingRequests), 1);
-        return true;
+            $.ajax(this.requests[0]);
+        },
+        stop: function () {
+            this.requests = [];
+        },
     };
 
     app.HideAllSections = function () {
@@ -114,6 +124,13 @@ var app = {};
             onChange: function (sender, data) {
                 $('#solidColorModeValue').css("background-color", data.hexColor);
                 $('#solidColorModeValue').val(data.hexColor);
+
+                var payload = { F: 6, R: data.color.R, G: data.color.G, B: data.color.B };
+                app.AjaxManager.addReq({
+                    type: "PUT",
+                    url: "/api/color",
+                    data: JSON.stringify(payload)
+                });
             }
         });
 
