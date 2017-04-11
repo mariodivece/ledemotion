@@ -67,5 +67,44 @@
             return true;
         }
 
+        [WebApiHandler(HttpVerbs.Put, RelativePath + "transition")]
+        public async Task<bool> PutTranstion(WebServer server, HttpListenerContext context)
+        {
+            try
+            {
+                var data = Json.Deserialize(context.RequestBody()) as Dictionary<string, object>;
+
+                var transitionTime = TimeSpan.FromSeconds(int.Parse(data["Delay"].ToString()));
+                var transitionColors = new List<byte[]>();
+                var colors = data["Colors"] as List<object>;
+                foreach (List<object> color in colors)
+                {
+                    transitionColors.Add(new byte[] {
+                        Convert.ToByte((decimal)color[0]),
+                        Convert.ToByte((decimal)color[1]),
+                        Convert.ToByte((decimal)color[2])});
+                }
+
+                LedStripWorker.Instance.SetTransition(transitionColors, transitionTime);
+
+                await context.JsonResponseAsync(new
+                {
+                    Cl = $"{colors.Count}",
+                    Ms = $"{transitionTime.TotalMilliseconds}"
+                });
+            }
+            catch(Exception ex)
+            {
+                await context.JsonResponseAsync(new
+                {
+                    ErrorType = ex.GetType().ToString(),
+                    Message = ex.Message
+                });
+
+                context.Response.StatusCode = 400;
+            }
+
+            return true;
+        }
     }
 }

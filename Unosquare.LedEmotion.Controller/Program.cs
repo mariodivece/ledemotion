@@ -1,6 +1,5 @@
 ﻿namespace Unosquare.LedEmotion.Controller
 {
-    using System;
     using System.Diagnostics;
     using System.Linq;
     using System.Threading;
@@ -33,8 +32,8 @@
             }
             else
             {
-                var exitReady = new ManualResetEvent(false);
-                exitReady.WaitOne();
+                while (true)
+                    Thread.Sleep(100);
             }
 
             WebServerWorker.Instance.Stop();

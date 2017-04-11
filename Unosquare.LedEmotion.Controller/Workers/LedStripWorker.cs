@@ -129,11 +129,24 @@
                 LedStrip.ClearPixels();
                 LedStrip.Render();
 
-                $"Rendering single pixel in red".Warn();
-                LedStrip.SetPixel(0, 1f, 255, 0, 0);
-                LedStrip.SetPixels(new byte[] { 255, 0, 0, 0, 255, 0, 0, 0, 255 }, 0, 1f, 1);
+                for (var i = 0; i < LedCount; i++)
+                {
+                    LedStrip.SetPixel(i, 1f, 255, 0, 0);
+                    LedStrip.Render();
+                    Thread.Sleep(10);
+                }
+
+                for (var i = 0; i < 3; i++)
+                {
+                    LedStrip.SetPixels(0, 255, 0);
+                    LedStrip.Render();
+                    Thread.Sleep(200);
+                    LedStrip.ClearPixels();
+                    LedStrip.Render();
+                    Thread.Sleep(200);
+                }
+
                 LedStrip.Render();
-                //return;
 
                 AnimationThread = new Thread(AnimateContinuosly)
                 {
@@ -181,10 +194,11 @@
         {
             IsPendingStop = false;
 
-            var frameStopwatch = new Stopwatch();
+            var startFrameTime = DateTime.UtcNow;
+
             while (IsPendingStop == false)
             {
-                frameStopwatch.Restart();
+                startFrameTime = DateTime.UtcNow;
                 FrameNumber = (FrameNumber == UInt64.MaxValue) ? 1 : FrameNumber + 1;
 
                 lock (SyncLock)
@@ -193,18 +207,19 @@
                     LedStrip.Render();
                 }
 
-                if (frameStopwatch.ElapsedMilliseconds > MillisecondsPerFrame)
+                var elapsedToFrame = MillisecondsPerFrame - Convert.ToInt32(DateTime.UtcNow.Subtract(startFrameTime).TotalMilliseconds);
+
+                if (elapsedToFrame <= 0)
                 {
                     $"Frames are lagging. Increase the frequency or simplify the rendering logic.".Warn(); // typeof(LedStripWorker));
                     continue;
                 }
-
-
-                while (frameStopwatch.ElapsedMilliseconds < MillisecondsPerFrame && !IsPendingStop)
-                    Thread.Sleep(1);
+                else
+                {
+                    Thread.Sleep(elapsedToFrame);
+                }
             }
 
-            frameStopwatch.Stop();
             IsPendingStop = false;
         }
 

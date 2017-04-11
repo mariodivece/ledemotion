@@ -1,4 +1,4 @@
-﻿; (function ($, window, document, undefined) {
+﻿(function ($, window, document, undefined) {
 
     "use strict";
 
@@ -183,7 +183,7 @@
                 e.preventDefault();
 
                 // rebuild graphics if size has changed
-                if (control.$element.width() != control.size.X || control.$element.height() != control.size.Y) {
+                if (control.$element.width() !== control.size.X || control.$element.height() !== control.size.Y) {
                     control.buildColorPalette();
                     console.warn("Palette was rebuilt because size was changed");
                 }
@@ -201,7 +201,7 @@
             });
         },
         clampInt: function (number, min, max) {
-            if (number == undefined || number == null || isNaN(number))
+            if (number === undefined || number === null || isNaN(number))
                 number = min;
 
             if (number < min) number = min;
@@ -210,11 +210,11 @@
             return number | 0;
         },
         rgb2hex: function (rgb) {
-            return (rgb) ? "#" +
+            return rgb ? "#" +
                 ("0" + parseInt(rgb.R, 10).toString(16)).slice(-2) +
                 ("0" + parseInt(rgb.G, 10).toString(16)).slice(-2) +
                 ("0" + parseInt(rgb.B, 10).toString(16)).slice(-2) : '';
-        },
+        }
     });
 
     // Register the plugin and prevent multiple instantiations

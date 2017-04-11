@@ -7,6 +7,8 @@
 
     public class SolidColorAnimation : IAnimation
     {
+        public readonly byte[] LastRenderedColor = new byte[3];
+        public readonly byte[] TargetColor = new byte[3];
         private readonly Queue<byte[]> ColorQueue = new Queue<byte[]>();
         private readonly object SyncLock = new object();
 
@@ -14,6 +16,8 @@
         {
             // placeholder
         }
+
+        public int QueueLength { get { return ColorQueue.Count; } }
 
         public bool IsTransitionComplete { get { return ColorQueue.Count <= 1; } }
 
@@ -24,6 +28,7 @@
                 if (ColorQueue.Count == 0)
                     ColorQueue.Enqueue(new byte[3]);
 
+                rgb.CopyTo(TargetColor, 0);
                 var currentColor = ColorQueue.Peek();
 
                 // if the colors are the same just stay where we are.
@@ -76,12 +81,15 @@
 
                 // If we ar in the last frame, just peek it, otherwise, dequeue it.
                 var c = ColorQueue.Count == 1 ? ColorQueue.Peek() : ColorQueue.Dequeue();
-                LedStripWorker.Instance.LedStrip.SetPixels(c[0], c[1], c[2]);
-
-                if (ColorQueue.Count >= 1)
+                if (LastRenderedColor.Contains(c) == false)
                 {
-                    //$"Solid Color Render: {c[0]}, {c[1]}, {c[2]}".Trace();
+                    LedStripWorker.Instance.LedStrip.SetPixels(c[0], c[1], c[2]);
+                    LastRenderedColor[0] = c[0];
+                    LastRenderedColor[1] = c[1];
+                    LastRenderedColor[2] = c[2];
                 }
+                
+
             }
         }
     }

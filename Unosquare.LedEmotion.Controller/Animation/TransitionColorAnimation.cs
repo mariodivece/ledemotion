@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using Unosquare.Swan;
 
     public class TransitionColorAnimation : IAnimation
     {
@@ -22,6 +23,7 @@
         {
             lock (SyncLock)
             {
+                ColorSteps.Clear();
                 foreach (var color in rgbValues)
                     ColorSteps.Add(color);
 
@@ -37,7 +39,7 @@
             lock (SyncLock)
             {
                 CurrentAnimation.PaintNextFrame();
-
+                $"Queue Length: {CurrentAnimation.QueueLength}".Trace();
                 if (CurrentAnimation.IsTransitionComplete)
                 {
                     CurrentColorStep += ColorStepDirection;
@@ -56,6 +58,7 @@
 
                     var targetColor = ColorSteps[CurrentColorStep];
                     CurrentAnimation.EnqueueColor(targetColor, TransitionTimePerColor);
+                    $"New Target Color is: {CurrentAnimation.TargetColor[0]}, {CurrentAnimation.TargetColor[1]}, {CurrentAnimation.TargetColor[2]}".Trace();
                 }
             }
 
