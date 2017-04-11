@@ -184,7 +184,7 @@
                 buffer[i + 2] = b;
             }
 
-            SetPixels(buffer);
+            SetPixels(buffer, 0, 1f, 0, LedCount);
         }
 
 
@@ -226,7 +226,7 @@
                     throw new ArgumentOutOfRangeException(nameof(targetOffset));
 
                 if (targetLength <= 0)
-                    targetLength = LedCount;
+                    targetLength = pixels.Length / 3;
 
                 if (targetOffset + targetLength > LedCount)
                     throw new ArgumentOutOfRangeException(nameof(targetLength));
@@ -241,19 +241,19 @@
             // Offset and addresing settings
             var offsetB = ReverseRgb ? 1 : 3; var offsetG = 2; var offsetR = ReverseRgb ? 3 : 1; var offsetT = 0;
             var setCount = 0;
-            var bmpOffsetBase = startPixelIndex * 3;
-            var bmpOffsetLimit = bmpOffsetBase + (targetLength * 3);
+            var pixelOffsetBase = startPixelIndex * 3;
+            var pixelOffsetLimit = pixelOffsetBase + (targetLength * 3);
             var frameBufferOffset = StartFrame.Length + (targetOffset * StartFrame.Length);
 
             // Pixel copying
             lock (SyncLock)
             {
-                for (var bmpOffset = bmpOffsetBase; bmpOffset < bmpOffsetLimit; bmpOffset += BitmapBuffer.BytesPerPixel)
+                for (var pixelOffset = pixelOffsetBase; pixelOffset < pixelOffsetLimit; pixelOffset += 3)
                 {
                     FrameBuffer[frameBufferOffset + offsetT] = brightnessByte;
-                    FrameBuffer[frameBufferOffset + offsetR] = pixels[bmpOffset + BitmapBuffer.ROffset]; // R
-                    FrameBuffer[frameBufferOffset + offsetG] = pixels[bmpOffset + BitmapBuffer.GOffset]; // G
-                    FrameBuffer[frameBufferOffset + offsetB] = pixels[bmpOffset + BitmapBuffer.BOffset]; // B
+                    FrameBuffer[frameBufferOffset + offsetR] = pixels[pixelOffset + 0]; // R
+                    FrameBuffer[frameBufferOffset + offsetG] = pixels[pixelOffset + 1]; // G
+                    FrameBuffer[frameBufferOffset + offsetB] = pixels[pixelOffset + 2]; // B
                     frameBufferOffset += StartFrame.Length;
                     setCount += 1;
 

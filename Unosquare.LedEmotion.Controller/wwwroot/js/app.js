@@ -163,7 +163,7 @@ var app = {};
         $('#transitionColorModeAdd').click(function () { app.AddTransitionColor(); });
 
         // Show the welcome page!
-        app.ShowSection(app.Constants.Sections.TransitionMode);
+        app.ShowSection(app.Constants.Sections.SimpleMode);
     };
 
     app.Initialize = function () {

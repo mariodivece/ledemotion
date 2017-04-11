@@ -77,6 +77,7 @@
                 // If we ar in the last frame, just peek it, otherwise, dequeue it.
                 var c = ColorQueue.Count == 1 ? ColorQueue.Peek() : ColorQueue.Dequeue();
                 LedStripWorker.Instance.LedStrip.SetPixels(c[0], c[1], c[2]);
+
                 if (ColorQueue.Count >= 1)
                 {
                     //$"Solid Color Render: {c[0]}, {c[1]}, {c[2]}".Trace();

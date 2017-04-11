@@ -53,7 +53,7 @@
             {
                 if (Server != null) return;
 
-                Server = new WebServer(DefaultUrl);
+                Server = new WebServer( Debugger.IsAttached ? DefaultUrl : "http://+:9696");
                 Server.RegisterModule(new LocalSessionModule());
                 Server.RegisterModule(new StaticFilesModule(StaticFilesRootPath));
                 Server.Module<StaticFilesModule>().UseRamCache = false;
