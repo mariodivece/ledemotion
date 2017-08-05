@@ -2,14 +2,13 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Drawing;
     using System.Threading;
+    using System.Threading.Tasks;
     using Unosquare.LedEmotion.Controller.Animation;
     using Unosquare.LedEmotion.Controller.Core;
     using Unosquare.Swan;
     using Unosquare.Swan.Abstractions;
-    using Unosquare.Swan.Formatters;
 
     /// <summary>
     /// Represents a worker capable of initializing and animating the LED strip
@@ -120,41 +119,43 @@
             {
                 if (LedStrip != null) return;
 
-                LedStrip = new DotStarLedStrip(
-                    ledCount: LedCount,
-                    spiChannel: SpiChannel,
-                    spiFrequency: SpiFrequency,
-                    reverseRgb: true);
-
-                LedStrip.ClearPixels();
-                LedStrip.Render();
-
-                for (var i = 0; i < LedCount; i++)
+                using (var tickLock = new ManualResetEvent(false))
                 {
-                    LedStrip.SetPixel(i, 1f, 255, 0, 0);
-                    LedStrip.Render();
-                    Thread.Sleep(10);
-                }
+                    LedStrip = new DotStarLedStrip(
+                        ledCount: LedCount,
+                        spiChannel: SpiChannel,
+                        spiFrequency: SpiFrequency,
+                        reverseRgb: true);
 
-                for (var i = 0; i < 3; i++)
-                {
-                    LedStrip.SetPixels(0, 255, 0);
-                    LedStrip.Render();
-                    Thread.Sleep(200);
                     LedStrip.ClearPixels();
                     LedStrip.Render();
-                    Thread.Sleep(200);
+
+                    for (var i = 0; i < LedCount; i++)
+                    {
+                        LedStrip.SetPixel(i, 1f, 255, 0, 0);
+                        LedStrip.Render();
+                        tickLock.WaitOne(10);
+                    }
+
+                    for (var i = 0; i < 3; i++)
+                    {
+                        LedStrip.SetPixels(0, 255, 0);
+                        LedStrip.Render();
+                        tickLock.WaitOne(200);
+                        LedStrip.ClearPixels();
+                        LedStrip.Render();
+                        tickLock.WaitOne(200);
+                    }
+
+                    LedStrip.Render();
+
+                    AnimationThread = new Thread(AnimateContinuosly)
+                    {
+                        IsBackground = true
+                    };
+
+                    AnimationThread.Start();
                 }
-
-                LedStrip.Render();
-
-                AnimationThread = new Thread(AnimateContinuosly)
-                {
-                    IsBackground = true
-                };
-
-                AnimationThread.Start();
-
             }
         }
 
@@ -169,8 +170,11 @@
 
                 IsPendingStop = true;
 
-                while (AnimationThread.ThreadState == System.Threading.ThreadState.Running)
-                    Thread.Sleep(1);
+                using (var sleepLock = new ManualResetEvent(false))
+                {
+                    while (AnimationThread.ThreadState == ThreadState.Running)
+                        sleepLock.WaitOne(1);
+                }
 
                 AnimationThread = null;
 
@@ -195,28 +199,30 @@
             IsPendingStop = false;
 
             var startFrameTime = DateTime.UtcNow;
-
-            while (IsPendingStop == false)
+            using (var tickLock = new ManualResetEvent(false))
             {
-                startFrameTime = DateTime.UtcNow;
-                FrameNumber = (FrameNumber == UInt64.MaxValue) ? 1 : FrameNumber + 1;
-
-                lock (SyncLock)
+                while (IsPendingStop == false)
                 {
-                    CurrentAnimation.PaintNextFrame();
-                    LedStrip.Render();
-                }
+                    startFrameTime = DateTime.UtcNow;
+                    FrameNumber = (FrameNumber == UInt64.MaxValue) ? 1 : FrameNumber + 1;
 
-                var elapsedToFrame = MillisecondsPerFrame - Convert.ToInt32(DateTime.UtcNow.Subtract(startFrameTime).TotalMilliseconds);
+                    lock (SyncLock)
+                    {
+                        CurrentAnimation.PaintNextFrame();
+                        LedStrip.Render();
+                    }
 
-                if (elapsedToFrame <= 0)
-                {
-                    $"Frames are lagging. Increase the frequency or simplify the rendering logic.".Warn(); // typeof(LedStripWorker));
-                    continue;
-                }
-                else
-                {
-                    Thread.Sleep(elapsedToFrame);
+                    var elapsedToFrame = MillisecondsPerFrame - Convert.ToInt32(DateTime.UtcNow.Subtract(startFrameTime).TotalMilliseconds);
+
+                    if (elapsedToFrame <= 0)
+                    {
+                        $"Frames are lagging. Increase the frequency or simplify the rendering logic.".Warn(); // typeof(LedStripWorker));
+                        continue;
+                    }
+                    else
+                    {
+                        tickLock.WaitOne(elapsedToFrame);
+                    }
                 }
             }
 

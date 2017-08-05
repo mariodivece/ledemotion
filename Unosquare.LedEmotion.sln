@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.9
+VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unosquare.LedEmotion.Controller", "Unosquare.LedEmotion.Controller\Unosquare.LedEmotion.Controller.csproj", "{D81AFC82-BA90-4A8A-A483-9CC17AF02069}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Support", "Support", "{1AAD70DD-2E65-43DE-A169-DA5387FA5C15}"
 	ProjectSection(SolutionItems) = preProject
 		Support\deploy.bat = Support\deploy.bat
+		LICENSE = LICENSE
+		README.md = README.md
 	EndProjectSection
 EndProject
 Global
