@@ -1,4 +1,4 @@
-﻿(function ($, window, document, undefined) {
+(function ($, window, document, undefined) {
 
     "use strict";
 
@@ -131,6 +131,23 @@
                 //console.error("No image data on: X: " + control.position.X + ', Y: ' + control.position.Y);
             }
         },
+        captureMousePos: function(e) {
+            var control = this;
+            if (control.isMouseDown !== true)
+                return;
+
+            if (e.touches !== undefined && e.touches.length > 0) {
+                e.pageX = e.touches[0].pageX;
+                e.pageY = e.touches[0].pageY;
+            }
+
+            var x = e.pageX - control.$element.offset().left;
+            var y = e.pageY - control.$element.offset().top;
+
+            // clamp the values
+            control.position.X = control.clampInt(x, 0, control.size.X);
+            control.position.Y = control.clampInt(y, 0, control.size.Y);
+        },
         bindEvents: function () {
             var control = this;
 
@@ -140,18 +157,7 @@
                 if (control.isMouseDown !== true)
                     return;
 
-                if (e.touches !== undefined && e.touches.length > 0) {
-                    e.pageX = e.touches[0].pageX;
-                    e.pageY = e.touches[0].pageY;
-                }
-
-                var x = e.pageX - control.$element.offset().left;
-                var y = e.pageY - control.$element.offset().top;
-
-                // clamp the values
-                control.position.X = control.clampInt(x, 0, control.size.X);
-                control.position.Y = control.clampInt(y, 0, control.size.Y);
-
+                control.captureMousePos(e);
             });
 
             // Bind: Mouse Up
@@ -189,6 +195,7 @@
                 }
 
                 // Event: Begin
+                control.captureMousePos(e);
                 control.pollDataCallback();
                 var eventData = control.getEventData();
                 control.$element.trigger("begin", [eventData]);

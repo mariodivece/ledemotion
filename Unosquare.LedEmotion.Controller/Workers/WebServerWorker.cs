@@ -14,7 +14,7 @@
     public class WebServerWorker : SingletonBase<WebServerWorker>, IWorker
     {
         private const string DefaultUrl = "http://localhost:9696/";
-        private const string StaticFilesFolderName = "wwwroot";
+        public const string StaticFilesFolderName = "wwwroot";
 
         private static readonly object SyncLock = new object();
         private CancellationTokenSource TokenSource = null;

@@ -63,6 +63,8 @@ $(function () {
         }
     };
 
+    app.AppState = {};
+
     app.HideAllSections = function () {
         $('div.container.section').hide();
         $("ul.nav li a[data-section]").closest('li').removeClass('active');
@@ -131,6 +133,19 @@ $(function () {
         app.LoadTemplates();
     };
 
+    app.RefreshAppState = function () {
+        $.ajax({
+            url: "api/appstate",
+            data: { t: new Date().getTime() },
+            async: false,
+            success: function (data) {
+                app.AppState = data;
+            }
+        });
+
+        return app.AppState;
+    };
+
     app.SetColor = function (sender, data, sendToApi) {
         $('#solidColorModeValue').css("background-color", data.hexColor);
         $('#solidColorModeValue').val(data.hexColor);
@@ -156,7 +171,7 @@ $(function () {
         app.AjaxManager.addReq({
             type: "PUT",
             url: "/api/color",
-            data: JSON.stringify(payload)
+            data: JSON.stringify(payload),
         });
     };
 
@@ -169,7 +184,7 @@ $(function () {
             onDone: function (sender, data) {
                 app.SetColor(sender, data, true);
             },
-            oBegin: function (sender, data) {
+            onBegin: function (sender, data) {
                 app.SetColor(sender, data, true);
             }
         });
@@ -182,6 +197,7 @@ $(function () {
         };
 
         app.SetColor(null, eventData, false);
+        var state = app.RefreshAppState();
     };
 
     app.TransitionDelaySlider = null;

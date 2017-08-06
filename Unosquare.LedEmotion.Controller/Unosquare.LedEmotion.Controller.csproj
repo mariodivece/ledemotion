@@ -49,8 +49,8 @@
     <Reference Include="Unosquare.RaspberryIO, Version=0.11.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Unosquare.Raspberry.IO.0.11.0\lib\net452\Unosquare.RaspberryIO.dll</HintPath>
     </Reference>
-    <Reference Include="Unosquare.Swan, Version=0.14.9.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unosquare.Swan.0.14.9\lib\net452\Unosquare.Swan.dll</HintPath>
+    <Reference Include="Unosquare.Swan, Version=0.14.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unosquare.Swan.0.14.10\lib\net452\Unosquare.Swan.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -60,6 +60,8 @@
     <Compile Include="Core\DotStartLedStripPixel.cs" />
     <Compile Include="Animation\IAnimation.cs" />
     <Compile Include="Animation\ImageAnimation.cs" />
+    <Compile Include="Core\AppState.cs" />
+    <Compile Include="Core\SolidColorPreset.cs" />
     <Compile Include="Workers\IWorker.cs" />
     <Compile Include="Workers\LedStripWorker.cs" />
     <Compile Include="Program.cs" />

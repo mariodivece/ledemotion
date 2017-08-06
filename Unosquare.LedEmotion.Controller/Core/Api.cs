@@ -29,6 +29,13 @@
             return true;
         }
 
+        [WebApiHandler(HttpVerbs.Get, RelativePath + "appstate")]
+        public async Task<bool> GetAppState(WebServer server, HttpListenerContext context)
+        {
+            await context.JsonResponseAsync(Program.State);
+            return true;
+        }
+
         [WebApiHandler(HttpVerbs.Put, RelativePath + "color")]
         public async Task<bool> PutColor(WebServer server, HttpListenerContext context)
         {
