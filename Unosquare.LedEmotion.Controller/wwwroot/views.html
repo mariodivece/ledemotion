@@ -1,4 +1,4 @@
-﻿<script id="status-view" type="text/x-handlebars-template">
+<script id="status-view" type="text/x-handlebars-template">
     <div class="row">
         <div class="col-sm-12">
             <h3>Newtork LED Controller Status</h3>
@@ -49,7 +49,7 @@
                         <div class="input-group">
                             <input id="solidColorModeValue" class="form-control color-input" type="text" disabled="disabled" />
                             <span class="input-group-btn">
-                                <button class="btn btn-default" type="button">
+                                <button class="btn btn-default" type="button" onclick="app.AddSolidColorPreset()">
                                     <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
                                 </button>
                             </span>
@@ -65,6 +65,10 @@
         <div class="col-sm-12">
             <canvas id="solidColorModeCanvas" style="width: 100%; height: 300px;"></canvas>
         </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12" id="solicColorModePresets"></div>
     </div>
 
 </script>
@@ -119,3 +123,19 @@
     </div>
 </script>
 
+<script id="simplemode-preset-view" type="text/x-handlebars-template">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="transition-color-item" 
+                style="float: left; background-color:{{eventData.hexColor}}; cursor: pointer;"
+                onclick="app.SetColor(null, app.CreateColorEventData({{R}},{{G}},{{B}},0,0), true)">
+                &nbsp;
+            </div>
+            <div style="float:left;padding-top: 16px; font-size:18px; color:#3c3c3c">{{Name}}</div>
+
+            <div style="float:right;padding-top: 16px;">
+                <button class="btn btn-danger btn-sm" onclick="app.DeleteSolidColorPreset('{{Name}}')">Delete</button>
+            </div>
+        </div>
+    </div>
+</script>

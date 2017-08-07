@@ -9,6 +9,26 @@ $(function () {
         return this.charAt(0).toUpperCase() + this.slice(1);
     };
 
+    app.ByteToHex = function(c) {
+        var hex = c.toString(16);
+        return hex.length == 1 ? "0" + hex : hex;
+    };
+
+    app.Alert = function(message) {
+      alert(message);  
+    };
+
+    app.CreateColorEventData = function(r, g, b, x, y) {
+        var eventData = {
+            color: { R: r, G: g, B: b },
+            rgbColor: 'rgb(' + r + ',' + g + ',' + b + ')',
+            hexColor: '#' + app.ByteToHex(r) + app.ByteToHex(g) + app.ByteToHex(b),
+            position: { X: x, Y: y }
+        };
+
+        return eventData;
+    };
+
     app.Constants = {
         SectionDataAttribute: 'section',
         SectionElementSuffix: 'Container',
@@ -24,7 +44,8 @@ $(function () {
         StatusView: '',
         SimpleModeView: '',
         TransitionModeView: '',
-        CustomImageModeView: ''
+        CustomImageModeView: '',
+        SimpleModePresetView: '',
     };
 
     app.AjaxManager = {
@@ -93,6 +114,7 @@ $(function () {
             app.Templates.SimpleModeView = Handlebars.compile(tpls.find('#simplemode-view').html());
             app.Templates.TransitionModeView = Handlebars.compile(tpls.find('#transitionmode-view').html());
             app.Templates.CustomImageModeView = Handlebars.compile(tpls.find('#customimagemode-view').html());
+            app.Templates.SimpleModePresetView = Handlebars.compile(tpls.find('#simplemode-preset-view').html());
 
             // start the app
             app.InitializeNavigation();
@@ -133,22 +155,81 @@ $(function () {
         app.LoadTemplates();
     };
 
-    app.RefreshAppState = function () {
-        $.ajax({
-            url: "api/appstate",
-            data: { t: new Date().getTime() },
-            async: false,
-            success: function (data) {
-                app.AppState = data;
-            }
+    app.CreateElementFromTemplate = function (template, context) {
+        context = context || {};
+
+        var el = document.createElement('div');
+        return template(context);
+    };
+
+    app.RefreshAppState = function (fromServer) {
+        if (fromServer === true)
+        {
+            $.ajax({
+                url: "api/appstate",
+                data: { t: new Date().getTime() },
+                async: false,
+                success: function (data) {
+                    app.AppState = data;
+                }
+            });
+        }
+
+        var $listEl = $('#solicColorModePresets'); 
+        $listEl.empty();
+
+        $.each(app.AppState.SolidColorPresets, function (index, value) {
+            value.eventData = app.CreateColorEventData(value.R, value.G, value.B);
+            $listEl.append(app.CreateElementFromTemplate(app.Templates.SimpleModePresetView, value));
         });
 
         return app.AppState;
     };
 
+    app.AddSolidColorPreset = function() {
+        var presetName = prompt("Enter a name for the preset", "");
+        if (presetName == null || presetName == "") {
+            return;
+        }
+
+        $.ajax({
+            url: "api/preset",
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ 
+                Name: presetName,
+                R: $('#solidColorModeValue').data('R'),
+                G: $('#solidColorModeValue').data('G'),
+                B: $('#solidColorModeValue').data('B')
+                }),
+            async: true,
+            success: function (data) {
+                app.AppState = data;
+                app.RefreshAppState(false);
+            }
+        });
+    };
+
+    app.DeleteSolidColorPreset = function(presetName) {
+        $.ajax({
+            url: "api/preset",
+            type: 'DELETE',
+            contentType: 'application/json',
+            data: JSON.stringify({ Name: presetName }),
+            async: true,
+            success: function (data) {
+                app.AppState = data;
+                app.RefreshAppState(false);
+            }
+        });
+    };
+
     app.SetColor = function (sender, data, sendToApi) {
         $('#solidColorModeValue').css("background-color", data.hexColor);
         $('#solidColorModeValue').val(data.hexColor);
+        $('#solidColorModeValue').data('R', data.color.R);
+        $('#solidColorModeValue').data('G', data.color.G);
+        $('#solidColorModeValue').data('B', data.color.B);
 
         if (sendToApi !== true)
             return;
@@ -189,15 +270,9 @@ $(function () {
             }
         });
 
-        var eventData = {
-            color: { R: 0, G: 0, B: 0 },
-            rgbColor: 'rgb(0,0,0)',
-            hexColor: '#000000',
-            position: { X: 0, Y: 0 }
-        };
-
+        var eventData = app.CreateColorEventData(0, 0, 0, 0, 0);
         app.SetColor(null, eventData, false);
-        var state = app.RefreshAppState();
+        var state = app.RefreshAppState(true);
     };
 
     app.TransitionDelaySlider = null;
@@ -233,18 +308,22 @@ $(function () {
         app.TransitionDelaySlider = $("#transitionDelaySlider")[0];
 
         noUiSlider.create(app.TransitionDelaySlider, {
-            start: 1500,
+            start: 30,
             behaviour: 'tap-drag', // Move handle on tap, bar is draggable
             tooltips: false,
             connect: [true, false],
             range: {
                 'min': 1,
-                'max': 3600
+                'max': 300
             },
             'step': 1
         });
 
         app.TransitionDelaySlider.noUiSlider.on("set", function (e) {
+            app.UpdateTransitionUI();
+        });
+
+        app.TransitionDelaySlider.noUiSlider.on("update", function (e) {
             app.UpdateTransitionUI();
         });
 

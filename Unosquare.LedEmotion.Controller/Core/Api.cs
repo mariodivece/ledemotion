@@ -2,11 +2,13 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
     using Unosquare.Labs.EmbedIO;
     using Unosquare.Labs.EmbedIO.Modules;
     using Unosquare.LedEmotion.Controller.Workers;
+    using Unosquare.Swan;
     using Unosquare.Swan.Formatters;
 
     public class Api : WebApiController
@@ -73,6 +75,73 @@
 
             return true;
         }
+
+        [WebApiHandler(HttpVerbs.Delete, RelativePath + "preset")]
+        public async Task<bool> DeletePreset(WebServer server, HttpListenerContext context)
+        {
+            try
+            {
+                var data = Json.Deserialize(context.RequestBody()) as Dictionary<string, object>;
+
+                var removeTarget = 
+                    Program.State.SolidColorPresets.FirstOrDefault(d => d.Name.Equals(data["Name"] as string));
+
+                if (removeTarget != null)
+                {
+                    Program.State.SolidColorPresets.Remove(removeTarget);
+                    Program.SaveState();
+                }
+
+                await context.JsonResponseAsync(Program.State);
+            }
+            catch (Exception ex)
+            {
+                await context.JsonResponseAsync(new
+                {
+                    ErrorType = ex.GetType().ToString(),
+                    Message = ex.Message
+                });
+
+                context.Response.StatusCode = 400;
+            }
+
+
+            return true;
+        }
+
+        [WebApiHandler(HttpVerbs.Post, RelativePath + "preset")]
+        public async Task<bool> AddPreset(WebServer server, HttpListenerContext context)
+        {
+            try
+            {
+                var data = Json.Deserialize<SolidColorPreset>(context.RequestBody());
+
+                var existingTarget =
+                    Program.State.SolidColorPresets.FirstOrDefault(d => d.Name.Equals(data.Name));
+
+                if (existingTarget != null)
+                    data.CopyPropertiesTo(existingTarget);
+                else
+                    Program.State.SolidColorPresets.Add(data);
+                
+                Program.SaveState();
+                await context.JsonResponseAsync(Program.State);
+            }
+            catch (Exception ex)
+            {
+                await context.JsonResponseAsync(new
+                {
+                    ErrorType = ex.GetType().ToString(),
+                    Message = ex.Message
+                });
+
+                context.Response.StatusCode = 400;
+            }
+
+
+            return true;
+        }
+
 
         [WebApiHandler(HttpVerbs.Put, RelativePath + "transition")]
         public async Task<bool> PutTranstion(WebServer server, HttpListenerContext context)
