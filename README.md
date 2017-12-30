@@ -1,6 +1,9 @@
 # ledemotion
 A very cool LED strip controller for the Raspoberry PI
 
+**Note: This started as a personal project, and given its coolness, it is now being enhanced and maintained by the Unosquare Lasb team. Please go to the following GitHub repo to find the latest source: https://github.com/unosquare/ledemotion**
+
+
 Here are the steps to get this running
 
 1. Update and upgrade the distro, install mono
